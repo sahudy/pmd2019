@@ -165,8 +165,30 @@
                 number: number 
               }
  ```
+ #### Juntando diferentes coleções:
+ No exemplo abaixo, vamos selecionar todos os dados onde há uma junção de coleções.
  
- ## Arquitetura de distribuição de dados e replicação
+                AQL                                                                  SQL
+                
+ ```
+
+       FOR user IN users                                      SELECT * FROM users
+          FOR friend IN friends                               INNER JOIN friends
+          FILTER friend.user == user._key                     ON (friends.user = users.id);
+          RETURN MERGE(user, friend)                
+
+ ```              
+ 
+ 
+ ##  Replicação e arquitetura de distribuição de dados
+ ### Replicação
+   A replicação pode ser definida como cópias dos dados de um nó do sistema para outro, de forma a permitir recuperação de falhas no caso de quedas de conexões entre servidores. Para isso o ArangoDB oferece dois tipos de replicação: síncrona e assíncrona.
+   
+   #### Replicação síncrona
+   A replicação síncrona funciona apenas entre servidores dentro de um mesmo cluster, e é normalmente utilizada para operações críticas, onde os dados devem estar disponíveis a todo o momento. Normalmente este tipo de replicação guarda uma cópia de um fragmento dos dados em um ou mais outros servidores. Desta forma as operações de escrita só são devidamente validadas quando todas as réplicas efetuarem aquela operação de escrita, o que aumenta a latência desta operação, porém caso uma falha ocorra logo após a escrita, temos a garantia de que os dados presentes em qualquer uma das réplicas é o dado mais recente.
+   
+   #### Replicação assíncrona
+   A replicação assíncrona é usada principalmente na arquitetura de master/slave, de forma que os slaves conectam-se aos seus respectivos masters e aplicam localmente os eventos já aplicados ao master em mesma ordem, como resultado os slaves terão os dados no mesmo estado que os seus respectivos masters.
  
  #### Nesta seção serão exemplicados todos os tipos de arquitetura presentes no ArangoDB.
  
@@ -176,12 +198,13 @@
    Mesmo sem todos os recursos citados anteriormente, é possível rodar múltiplos processos na mesma máquina com esta arquitetura, contanto que as portas e os dados sejam configurados diferentemente.
    
  ### Master/Slave
-  O ArangoDB possui a arquitetura *Master/Slave* onde os *Slaves* recebem dados assíncronos de um *Master*. Nos *Slaves* apenas é possível realizar apenas a leitura dos dados, enquanto o *Master* realiza inserções e atualizações dos dados. Na figura 1, pode ser observado ,de modo simplificada, esta arquitetura.
+  O ArangoDB possui a arquitetura *Master/Slave* onde os *Slaves* recebem dados assíncronos de um *Master*. Nos *Slaves* deveria ser possível apenas realizar a leitura dos dados, enquanto o *Master* realiza inserções e atualizações dos dados.
+  Devido algumas limitações na implementação do ArangoDB, o slave pode realizar alterações na base de dados, mesmo isso sendo incorreto conceitualmente.[2] Na figura 1, pode ser observado, de modo simplificada, esta arquitetura.
   
    ![](https://raw.githubusercontent.com/rabbit11/Massive-Data-Processing/master/Project/img/master-slave1.png)</br>
    **Figura 2: Arquitetura Master/Slave**
   
-  Nota: Devido algumas limitações na implementação do ArangoDB, o slave pode realizar alterações na base de dados, mesmo isso sendo incorreto conceitualmente.[2]
+  Nota: 
   
 ### Active Failover
   Uma arquitetura de *Active Failover* possui as seguintes características:
@@ -197,15 +220,6 @@
    
 ### Cluster
   A arquitetura de clusters no ArangoDB é CP master/master, o que significa (em termos do teorema CAP) que durante uma falha de conexão entre nós no servidor, este SGBD prioriza consistência interna no lugar de disponibilidade. Além disso uma arquitetura master/master permite que clientes podem mandar requisições de maneira arbitrária para qualquer nó e obter a mesma "visão" dos dados, sem um único ponto de falha, já que o cluster pode ainda servir a requisições mesmo com falhas em algumas máquinas.
-    
-### Replicação
-   A replicação pode ser definida como cópias dos dados de um nó do sistema para outro, de forma a permitir recuperação de falhas no caso de quedas de conexões entre servidores. Para isso o ArangoDB oferece dois tipos de replicação: síncrona e assíncrona.
-   
-   #### Replicação síncrona
-   A replicação síncrona funciona apenas entre servidores dentro de um mesmo cluster, e é normalmente utilizada para operações críticas, onde os dados devem estar disponíveis a todo o momento. Normalmente este tipo de replicação guarda uma cópia de um fragmento dos dados em um ou mais outros servidores. Desta forma as operações de escrita só são devidamente validadas quando todas as réplicas efetuarem aquela operação de escrita, o que aumenta a latência desta operação, porém caso uma falha ocorra logo após a escrita, temos a garantia de que os dados presentes em qualquer uma das réplicas é o dado mais recente.
-   
-   #### Replicação assíncrona
-   A replicação assíncrona é usada principalmente na arquitetura de master/slave, de forma que os slaves conectam-se aos seus respectivos masters e aplicam localmente os eventos já aplicados ao master em mesma ordem, como resultado os slaves terão os dados no mesmo estado que os seus respectivos masters.
 
 ## Implementação de Propriedades
 
@@ -269,37 +283,42 @@
    
    Após esta mensagem de sucesso, devemos executar um comando similar no terminal do terceiro computador:
    ```
-      arangodb --starter.data-dir=./db2 --starter.port="8530" --starter.join 192.168.15.6:8530
+      arangodb --starter.data-dir=./db3 --starter.port="8530" --starter.join 192.168.15.6:8530
    ```
   Devemos então receber uma mensagem de sucesso e o endereço de IP e porta que deveremos acessar em nosso browser para acessar a interface do ArangoDB. Normalmente deve ser algo semelhante à: http://127.0.0.1:8529/
+  
+  Na figura a seguir, ilustramos de fato o que está acontecendo no terminal.
+  
+  ![](https://raw.githubusercontent.com/rabbit11/Massive-Data-Processing/master/Project/img/tentou.jpeg)</br>
+  **Figura 4: Ilustração do terminal**
   
   ### Configuração do Banco de Dados
    Após acessar a interface web do ArangoDB, devemos selecionar o DB System e e clickar em *Select DB:_system*, como nesta imagem:
    
    ![](https://github.com/rabbit11/Massive-Data-Processing/blob/master/Project/img/selectDB-system-arangodb.jpeg?raw=true)</br>
-   **Figura 4: Tela inicial DB:System**
+   **Figura 5: Tela inicial DB:System**
    
    E então veremos uma tela semelhante à essa:
    
    ![](https://github.com/rabbit11/Massive-Data-Processing/blob/master/Project/img/dashboard-arangodb.jpeg?raw=true)</br>
-   **Figura 5: Web interface**
+   **Figura 6: Web interface**
    
    Iremos então para a aba *Database* e clicar em *Add Database*, que então gerará esta tela:
    
    ![](https://github.com/rabbit11/Massive-Data-Processing/blob/master/Project/img/createdb-arangodb.jpeg?raw=true)</br>
-   **Figura 5: Adicionando banco de dados**
+   **Figura 7: Adicionando banco de dados**
    
    Neste caso daremos o nome de Restaurants para o nosso database.
    
    Após isso devemos clicar nas setas brancas no topo da página, ao lado de *DB:_System*. Como mostrado na figura a seguir:
    
    ![](https://github.com/rabbit11/Massive-Data-Processing/blob/master/Project/img/troca.png?raw=true)</br>
-   **Figura 6: Trocar de banco**
+   **Figura 8: Trocar de banco**
    
    Ao clicar seremos redirecionados a tela inicial, onde desta vez devemos escolher o database Restaurants e clicar no botão *Select DB: Restaurants*.
    
    ![](https://github.com/rabbit11/Massive-Data-Processing/blob/master/Project/img/restaurants.png?raw=true)</br>
-   **Figura 7: Selecionando Restaurants**
+   **Figura 9: Selecionando Restaurants**
    
    Então deveremos acessar a aba Collections e adicionar uma nova coleção chamada *restaurants*, alterando as seguintes opções:
    
@@ -307,6 +326,9 @@
    * Replication Factor: 3
     
    Isso irá permitir que a replicação seja realizada em nosso banco.
+   
+   ![](https://github.com/rabbit11/Massive-Data-Processing/blob/master/Project/img/replicacao.jpeg)</br>
+   **Figura 10: Adicionando replicação**
    
    Nota: Essa opções para colocar a quantidade de replicação e o fator só podem ser feitos quando existe um ou mais slaves.
    
@@ -321,10 +343,14 @@
    Essa consulta deve retornar todos os restaurantes da base de dados, incluindo o número total de documentos encontrados.
    
   ## Testando a replicação dos dados
-   A replicação de dados implica que em alguns ou até mesmo todos os nós, devem possuir cópias de parte ou de todos os dados do database. Neste caso definimos nosso *Recplication Factor* desta nossa coleção como 3, o que implica que todos os 3 nós de nosso sistema possuem todos os dados de nossa base de dados. Sendo assim para testarmos a replicação, montamos o seguinte passo a passo:
+   A replicação de dados implica que em alguns ou até mesmo todos os nós, devem possuir cópias de parte ou de todos os dados do database. Neste caso definimos nosso *Replication Factor* desta nossa coleção como 3, o que implica que todos os 3 nós de nosso sistema possuem todos os dados de nossa base de dados. Sendo assim para testarmos a replicação, montamos o seguinte passo a passo:
    
    1. Finalize a instância do ArangoDB no nó master atual.
    2. Aguarde a eleição de um novo master (isso pode ser observado através do terminal, onde em um dos computadores deve retornar uma mensagem como: *Just Became Master*).
+   
+   ![](https://github.com/rabbit11/Massive-Data-Processing/blob/master/Project/img/master.jpeg)</br>
+   **Figura 11: Eleição do master**
+   
    3. Realize a seguinte consulta:
    ```
     FOR restaurant in restaurants RETURN restaurant
@@ -354,7 +380,7 @@
  5. Escreva uma consulta para retornar os campos nome do restaurante, bairro, gastronomia e endereço dos restaurantes que estão no bairro "Queens" de forma que o nome dos restaurantes estejam em ordem crescente.
  ```
  ```
- 6. Escreva uma consulta que conta quantos restaurantes existem por bairro.
+ 6. Escreva uma consulta para contar quantos restaurantes existem por bairro.
  ```
  
  Respostas: https://raw.githubusercontent.com/rabbit11/Massive-Data-Processing/master/Project/respostas
