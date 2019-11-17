@@ -1,8 +1,8 @@
-# Tutorial Apache-HBase(TM)
+# Tutorial Apache-HBase&trade;
 
 ## Sobre
 
-Este repositório é parte integrante do projeto final da disciplina de Processamento Massivo de Dados do curso de Ciência da Computação da Universidade Federal de São Carlos Campus Sorocaba ministrado pela Profa. Dra. Sahudy Montenegro González. O projeto é composto por uma documentação em português brasileiro detalhando como o banco de dados Apache HBase(TM) implementa as principais características de bancos NoSQL e um tutorial de instalação com forma de uso e exercícios práticos aplicados ao banco.
+Este repositório é parte integrante do projeto final da disciplina de Processamento Massivo de Dados do curso de Ciência da Computação da Universidade Federal de São Carlos Campus Sorocaba ministrado pela Profa. Dra. Sahudy Montenegro González. O projeto é composto por uma documentação em português brasileiro detalhando como o banco de dados Apache HBase&trade; implementa as principais características de bancos NoSQL e um tutorial de instalação com forma de uso e exercícios práticos aplicados ao banco.
 
 Membros do Projeto:
 - Eduardo Rodrigues da Cruz - 587540
@@ -32,7 +32,7 @@ Membros do Projeto:
 
 ## Objetivo
 
-O objetivo do projeto foi pesquisar, descrever e criar uma documentação em português do banco de dados NoSQL Apache HBase(TM), e detalhar suas características baseadas nos conceitos abordados em sala de aula.
+O objetivo do projeto foi pesquisar, descrever e criar uma documentação em português do banco de dados NoSQL Apache HBase&trade;, e detalhar suas características baseadas nos conceitos abordados em sala de aula.
 
 ## Introdução
 
@@ -236,197 +236,163 @@ O HBase também pode não ser a melhor escolha, alguns motivos: O HBase não é 
 
 ## Instalação e configuração do ambiente
 
-[5] Para usar o HBase, utilizaremos máquinas virtuais com sistema operacional CentOS e a ferramenta Cloudera Manager, que implementa um ambiente com todos os recursos necessários para o funcionamento do HBase. Também utilizaremos o editor de texto Vi neste tutorial, procure se familiarizar com os seus comandos antes de prosseguir.
+Para usar o HBase, utilizaremos máquinas virtuais com sistema operacional CentOS e a ferramenta Cloudera Manager, que implementa um ambiente com todos os recursos necessários para o funcionamento do HBase. Também utilizaremos o editor de texto Vi neste tutorial, procure se familiarizar com os seus comandos antes de prosseguir.
 
 ### Passo 1 - Criar 4 máquinas virtuais (1 NameNode, 3 DataNodes):
 
-<p>Para criação das máquinas virtuais (VMs), utilizaremos o <strong>VMware® Workstation 15 Player (15.5.0 build-14665864)</strong> com as seguintes configurações de sistema operacional e hardware:</p>
+Para criação das máquinas virtuais (VMs), utilizaremos o **VMware® Workstation 15 Player (15.5.0 build-14665864)** com as seguintes configurações de sistema operacional e hardware:
 
 - Sistema Operacional: CentOS Linux release 7.7.1908 (CentOS-7-x86_64-DVD-1908.iso)
 
 Hardware (Namenode):
 
-<p><img  src="https://lh4.googleusercontent.com/q1D1vtxzVbpgOsTj2QQIgIdWdwmKpfIFjIGjevMnD_hXTQlIUqIgWGGjWjQkyfxwvtbhC9fSAhTUxcHK1R9NzU2eqj24tmdGs36EYskBJ7oMFJyZnj9JnyoD0DN4kFc0y_yI9XaM"  alt=""></p>
+![](https://lh4.googleusercontent.com/q1D1vtxzVbpgOsTj2QQIgIdWdwmKpfIFjIGjevMnD_hXTQlIUqIgWGGjWjQkyfxwvtbhC9fSAhTUxcHK1R9NzU2eqj24tmdGs36EYskBJ7oMFJyZnj9JnyoD0DN4kFc0y_yI9XaM)
 
 
 Hardware (DataNodes):
 
 
-<p><img  src="https://lh6.googleusercontent.com/lOxZsWMbF5uLBh3qPbF1uCcdRxz9IzKlqv-RvH0gc_sOGeYBWoU8bZTnm-Nc8Tcav2khh4teUTIzLCExz9jwciSBtOY_xbyfrmg2RUqiMthFK1_w5sehLg40KQzVrR0v-caGO0n7"  alt=""></p>
+![](https://lh6.googleusercontent.com/lOxZsWMbF5uLBh3qPbF1uCcdRxz9IzKlqv-RvH0gc_sOGeYBWoU8bZTnm-Nc8Tcav2khh4teUTIzLCExz9jwciSBtOY_xbyfrmg2RUqiMthFK1_w5sehLg40KQzVrR0v-caGO0n7)
 
-<h4  id="credenciais">Credenciais:</h4>
-
-<pre><code>- Senha do root: cloudera
+#### Credenciais:
+```
+Senha do root: cloudera
 
 - Usuário: cloudera - (Deve ser administrador)
 
 - Senha: cloudera
+```
 
-</code></pre>
+### Passo 2: Dar privilégio de “sudo sem senha” para o usuário “cloudera” nas 4 VMs
 
-<h3  id="passo-2-dar-privilégio-de-“sudo-sem-senha”-para-o-usuário-“cloudera”-nas-4-vms">Passo 2: Dar privilégio de “sudo sem senha” para o usuário “cloudera” nas 4 VMs</h3>
+Isso deve ser feito para que o Cloudera Manager possa fazer alterações no sistema operacional, durante sua execução.
 
-<p>Isso deve ser feito para que o Cloudera Manager possa fazer alterações no sistema operacional, durante sua execução.</p>
+Abrir o terminal e digitar o comando:
+```
+[cloudera@localhost ~]$ sudo visudo
+```
+O arquivo de sudoers do sistema será aberto. Insira na última linha:
+```
+cloudera ALL=(ALL) NOPASSWD:ALL
+```
+Salve o arquivo e feche o editor. Isso dá ao usuário “cloudera” todas as permissões de sudo sem pedir senha.
 
-<p>Abrir o terminal e digitar o comando:</p>
+### Passo 3: Configurar os hostnames das 4 máquinas
 
-<pre><code>[cloudera@localhost ~]$ sudo visudo
-
-</code></pre>
-
-<p>O arquivo de sudoers do sistema será aberto. Insira na última linha:</p>
-
-<pre><code>cloudera ALL=(ALL) NOPASSWD:ALL
-
-</code></pre>
-
-<p>Salve o arquivo e feche o editor. Isso dá ao usuário “cloudera” todas as permissões de sudo sem pedir senha.</p>
-
-<h3  id="passo-3-configurar-os-hostnames-das-4-máquinas">Passo 3: Configurar os hostnames das 4 máquinas</h3>
-
-<p>Em cada uma das VMs, configure o hostname da máquina. Sugerimos os nomes master.hb, slave1.hb, slave2.hb e slave3.hb. Para configurar, utilize o comando abaixo:</p>
-
-<pre><code>[cloudera@localhost ~]$ sudo hostnamectl set-hostname &lt;nome escolhido&gt;
-
-</code></pre>
-
-<p>Edite o arquivo /etc/hosts para que cada VM conheça os hostnames das outras VMs. Adicione no começo do arquivo, o IP, o hostname completo e o hostname básico de cada VMs. O arquivo terá a mesma alteração nas 4 VMs. Exemplo:</p>
-
-<pre><code>172.16.217.131 master.hb master
-
-  
+Em cada uma das VMs, configure o hostname da máquina. Sugerimos os nomes master.hb, slave1.hb, slave2.hb e slave3.hb. Para configurar, utilize o comando abaixo:
+```
+[cloudera@localhost ~]$ sudo hostnamectl set-hostname &lt;nome escolhido&gt;
+```
+Edite o arquivo /etc/hosts para que cada VM conheça os hostnames das outras VMs. Adicione no começo do arquivo, o IP, o hostname completo e o hostname básico de cada VMs. O arquivo terá a mesma alteração nas 4 VMs. Exemplo:
+```
+172.16.217.131 master.hb master
 
 172.16.217.132 slave3.hb slave3
 
-  
-
 172.16.217.129 slave2.hb slave2
 
-  
-
 172.16.217.128 slave1.hb slave1
+```
 
-</code></pre>
+Procure não alterar outras linhas já presentes no arquivo. Apenas adicione as linhas acima no começo.
 
-<p>Procure não alterar outras linhas já presentes no arquivo. Apenas adicione as linhas acima no começo.</p>
+Em cada VM, edite o arquivo etc/sysconfig/network com o respectivo hostname completo de cada máquina. Para isso, basta adicionar a linha no começo do arquivo. Por exemplo, na master.hb, adicionaremos ao arquivo, a linha:
+```
+HOSTNAME=master.hb
+```
+### Passo 4: Desabilitar o Firewall em todas as VMs
 
-<p>Em cada VM, edite o arquivo etc/sysconfig/network com o respectivo hostname completo de cada máquina. Para isso, basta adicionar a linha no começo do arquivo. Por exemplo, na master.hb, adicionaremos ao arquivo, a linha:</p>
-
-<pre><code>HOSTNAME=master.hb
-
-</code></pre>
-
-<h3  id="passo-4-desabilitar-o-firewall-em-todas-as-vms">Passo 4: Desabilitar o Firewall em todas as VMs</h3>
-
-<p>Para desabilitar o Firewall, em cada uma das VMs, entre com os comandos:</p>
-
-<pre><code>$ sudo systemctl disable firewalld
-
-  
+Para desabilitar o Firewall, em cada uma das VMs, entre com os comandos:
+```
+$ sudo systemctl disable firewalld
 
 $ sudo systemctl stop firewalld
+```
+Isso desabilitará o Firewall e impedirá que ele seja ativado, caso o host reinicie.
 
-</code></pre>
+### Passo 5: Sincronizar os hosts.
 
-<p>Isso desabilitará o Firewall e impedirá que ele seja ativado, caso o host reinicie.</p>
+Em cada um dos hosts, faça o procedimento abaixo.
 
-<h3  id="passo-5-sincronizar-os-hosts.">Passo 5: Sincronizar os hosts.</h3>
+Para que o cluster funcione bem, todos os hosts devem estar sincronizados. Para isso usaremos o ntp, Network Time Protocol. Primeiro instale o serviço em cada host:
+```
+$ sudo yum install ntp -y
+```
+Edite o arquivo /etc/ntp.conf para adicionar os servidores NTP, como no exemplo:
 
-<p>Em cada um dos hosts, faça o procedimento abaixo.</p>
+server 0.pool.ntp.org
 
-<p>Para que o cluster funcione bem, todos os hosts devem estar sincronizados. Para isso usaremos o ntp, Network Time Protocol. Primeiro instale o serviço em cada host:</p>
+server 1.pool.ntp.org
 
-<pre><code>$ sudo yum install ntp -y
+server 2.pool.ntp.org
 
-</code></pre>
-
-<p>Edite o arquivo /etc/ntp.conf para adicionar os servidores NTP, como no exemplo:</p>
-
-<p>server <a  href="http://0.pool.ntp.org">0.pool.ntp.org</a></p>
-
-<p>server <a  href="http://1.pool.ntp.org">1.pool.ntp.org</a></p>
-
-<p>server <a  href="http://2.pool.ntp.org">2.pool.ntp.org</a></p>
-
-<p>Ative o serviço e configure-o para que seja ativado sempre que o host bootar:</p>
-
-<pre><code>$ sudo systemctl enable ntpd
-
-  
+Ative o serviço e configure-o para que seja ativado sempre que o host bootar:
+```
+$ sudo systemctl enable ntpd
 
 $ sudo systemctl start ntpd
-
-</code></pre>
-
-<p>Sincronize o relógio do sistema com o servidor ntp, e então sincronize o relógio do hardware também:</p>
-
-<pre><code>$ ntpdate -u 0.pool.ntp.org
-
-  
+```
+Sincronize o relógio do sistema com o servidor ntp, e então sincronize o relógio do hardware também:
+```
+$ ntpdate -u 0.pool.ntp.org
 
 $ hwclock --systohc
+```
 
-</code></pre>
+### Passo 6: Instalar o Cloudera Manager no master.hb.
 
-<h3  id="passo-6-instalar-o-cloudera-manager-no-master.hb.">Passo 6: Instalar o Cloudera Manager no master.hb.</h3>
+Execute os próximos passos apenas no host master.hb.
 
-<p>Execute os próximos passos apenas no host master.hb.</p>
+Primeiro, instale o wget, para baixar arquivos via terminal:
+```
+$ sudo yum install wget -y
+```
 
-<p>Primeiro, instale o wget, para baixar arquivos via terminal:</p>
+Agora, baixe o instalador do Cloudera Manager:
+```
+$ wget https://archive.cloudera.com/cm6/6.2.1/cloudera-manager-installer.bin
+```
 
-<pre><code>$ sudo yum install wget -y
-
-</code></pre>
-
-<p>Agora, baixe o instalador do Cloudera Manager:</p>
-
-<pre><code>$ wget https://archive.cloudera.com/cm6/6.2.1/cloudera-manager-installer.bin
-
-</code></pre>
-
-<p>Altere as permissões para executar o arquivo, e então, execute-o:</p>
-
-<pre><code>$ chmod u+x cloudera-manager-installer.bin
-
-  
+Altere as permissões para executar o arquivo, e então, execute-o:
+```
+$ chmod u+x cloudera-manager-installer.bin
 
 $ sudo ./cloudera-manager-installer.bin
+```
 
-</code></pre>
+Leia os termos de compromisso e clique em Aceitar -&gt; Aceitar -&gt; Sim. A instalação iniciará:
 
-<p>Leia os termos de compromisso e clique em Aceitar -&gt; Aceitar -&gt; Sim. A instalação iniciará:</p>
+![](https://lh4.googleusercontent.com/TaFm3JJmZwwVUwnFyEDUcY-OiFD-BXUtnrfvJvDUzJYnDGQUMdzvDoBye6_bTF4eqoeQgCm7TY5F-3fSQ4guKgFb96PJh5_WtyjwhwfOFCAKcsjfs4dmc--H4EwSrCf7XaNk7COf)
 
-<p><img  src="https://lh4.googleusercontent.com/TaFm3JJmZwwVUwnFyEDUcY-OiFD-BXUtnrfvJvDUzJYnDGQUMdzvDoBye6_bTF4eqoeQgCm7TY5F-3fSQ4guKgFb96PJh5_WtyjwhwfOFCAKcsjfs4dmc--H4EwSrCf7XaNk7COf"  alt=""></p>
+Ao final da instalação, clique em OK para encerrar.
 
-<p>Ao final da instalação, clique em OK para encerrar.</p>
+### Passo 7: Criar o Cluster
 
-<h3  id="passo-7-criar-o-cluster">Passo 7: Criar o Cluster</h3>
+Fora das VMs, no browser de sua máquina, acesse a Web UI do Cloudera Manager. Para isso, digite no browser o IP do master.hb e a porta 7180 ou 7183. Por exemplo: 172.16.217.131:7180.
 
-<p>Fora das VMs, no browser de sua máquina, acesse a Web UI do Cloudera Manager. Para isso, digite no browser o IP do master.hb e a porta 7180 ou 7183. Por exemplo: 172.16.217.131:7180.</p>
+Ao ser redirecionado, entre com usuário “admin” e senha “admin”. Você será redirecionado para a Instalação de Cluster. Clique em Continuar, forneça o nome para o novo cluster e clique novamente em Continuar.
 
-<p>Ao ser redirecionado, entre com usuário “admin” e senha “admin”. Você será redirecionado para a Instalação de Cluster. Clique em Continuar, forneça o nome para o novo cluster e clique novamente em Continuar.</p>
+![](https://lh4.googleusercontent.com/I8bKSMyoQl7Uij8HH-92wpkA2g9dr0u25IcG6_PvbT6ZI8wjhgIuacAn9XmD4slVcA9j8M89HpwcSX_c_EP5eD3JbC_B74UjtGO5-HYuil25PBpNSQJF7OPmoqZ_eRgjzEfO7WDi)
 
-<p><img  src="https://lh4.googleusercontent.com/I8bKSMyoQl7Uij8HH-92wpkA2g9dr0u25IcG6_PvbT6ZI8wjhgIuacAn9XmD4slVcA9j8M89HpwcSX_c_EP5eD3JbC_B74UjtGO5-HYuil25PBpNSQJF7OPmoqZ_eRgjzEfO7WDi"  alt=""></p>
+Agora especifique o host com o qual iniciará o Cluster, inserindo o ip do master.hb. Selecione-o e clique em Continuar:
 
-<p>Agora especifique o host com o qual iniciará o Cluster, inserindo o ip do master.hb. Selecione-o e clique em Continuar:</p>
+![](https://lh4.googleusercontent.com/dW1GEiaa2wb_IxPRuOG3gDsvgMy4lK7fvntiiiKza1yqIfzpqa1P6QCjdDCPaFLa0qWcl8UeNm0nB30nDn9Lnvv8bbbjRWmOUMhmxHXlr1a8S29QkqFYXDo_Kce8ZjjsPtxpPRk8)
 
-<p><img  src="https://lh4.googleusercontent.com/dW1GEiaa2wb_IxPRuOG3gDsvgMy4lK7fvntiiiKza1yqIfzpqa1P6QCjdDCPaFLa0qWcl8UeNm0nB30nDn9Lnvv8bbbjRWmOUMhmxHXlr1a8S29QkqFYXDo_Kce8ZjjsPtxpPRk8"  alt=""></p>
+Mantenha a opção de Repositório Público da Cloudera e clique em Continuar. Na tela seguinte, leia os termos de compromisso e selecione a opção de instalação do JDK e clique em Continuar.
 
-<p>Mantenha a opção de Repositório Público da Cloudera e clique em Continuar. Na tela seguinte, leia os termos de compromisso e selecione a opção de instalação do JDK e clique em Continuar.</p>
+A seguir, forneça as credenciais como estão na figura abaixo e clique em Continuar. Obs: senha “cloudera”.
 
-<p>A seguir, forneça as credenciais como estão na figura abaixo e clique em Continuar. Obs: senha “cloudera”.</p>
+![](https://lh6.googleusercontent.com/nXG2hqq2nv9iXZSFCK-tZG1p5kosxXRLGd0BppzZqg6mtP92WEhBuhVtBpC4DPdpcebyPAPLdi-nBoeda109j6QBc-YLECFLhuFeFChRCw4XqedKCDgO7vYJMBIRkk7c6xi_qEyz)
 
-<p><img  src="https://lh6.googleusercontent.com/nXG2hqq2nv9iXZSFCK-tZG1p5kosxXRLGd0BppzZqg6mtP92WEhBuhVtBpC4DPdpcebyPAPLdi-nBoeda109j6QBc-YLECFLhuFeFChRCw4XqedKCDgO7vYJMBIRkk7c6xi_qEyz"  alt=""></p>
+A seguir, a instalação do cluster começará. Aguarde a conclusão.
 
-<p>A seguir, a instalação do cluster começará. Aguarde a conclusão.</p>
+Por último, escolha os serviços que serão instalados no seu host. Instalaremos o Hdfs, Yarn, Zookeeper e, logicamente, o HBase. A máquina master.hb ficará com os seguintes papéis:
 
-<p>Por último, escolha os serviços que serão instalados no seu host. Instalaremos o Hdfs, Yarn, Zookeeper e, logicamente, o HBase. A máquina master.hb ficará com os seguintes papéis:</p>
+### Passo 8: Adicionar os outros 3 hosts
 
-<h3  id="passo-8-adicionar-os-outros-3-hosts">Passo 8: Adicionar os outros 3 hosts</h3>
+Clique em “Add Hosts” e será redirecionado para a página de registro de hosts. Selecione a opção “Add hosts to cluster” e selecione no dropbox o cluster criado anteriormente e clique em Continuar.
 
-<p>Clique em “Add Hosts” e será redirecionado para a página de registro de hosts. Selecione a opção “Add hosts to cluster” e selecione no dropbox o cluster criado anteriormente e clique em Continuar.</p>
-
-<p><img  src="https://lh3.googleusercontent.com/0Qz3J4-ETnzEmXtWhYMxfLb-_QpzUpDBwAuLz5vjmSIqrYiTjhJQ8y4vEEdpRXS2mJHXTTeho757nRX8Ycq1-crAzLlUEW6NvjjYwrX4yq-RfPx_klW_MUu4LcIrFsglTmy6cPSb"  alt=""></p>
+![](https://lh3.googleusercontent.com/0Qz3J4-ETnzEmXtWhYMxfLb-_QpzUpDBwAuLz5vjmSIqrYiTjhJQ8y4vEEdpRXS2mJHXTTeho757nRX8Ycq1-crAzLlUEW6NvjjYwrX4yq-RfPx_klW_MUu4LcIrFsglTmy6cPSb)
 
 Na próxima tela, forneça os IPs dos outros 3 hosts, de forma semelhante ao feito no passo anterior. Nas próximas etapas, siga as mesmas configurações do passo anterior até o momento de escolher Serviços. [[10]](https://www.cloudera.com/products/open-source/apache-hadoop/apache-hbase.html)
 
@@ -434,27 +400,24 @@ Na próxima tela, forneça os IPs dos outros 3 hosts, de forma semelhante ao fei
 
 **Finalmente, teremos nosso cluster funcionando, com Hadoop e HBase.**
 
-<h2  id="utilização-hbase">Utilização HBase</h2>
+## Utilização HBase
 
-<h3  id="passo-1-entrar-no-hbase-shell">Passo 1: Entrar no HBase Shell</h3>
+### Passo 1: Entrar no HBase Shell
 
-<p>Através do host master.hb, no terminal, digite:</p>
+Através do host master.hb, no terminal, digite:
+```
+$ hbase shell
+```
+### Passo 2: Criar uma tabela
+```
+$ create '<nome da tabela>','<família de colunas>'
+```
 
-<pre><code>$ hbase shell
+### Passo 3: Inserir valores nas colunas da tabela
 
-</code></pre>
-
-<h3  id="passo-2-criar-uma-tabela">Passo 2: Criar uma tabela</h3>
-
-<pre><code>$ create ‘&lt;nome da tabela&gt;’,’&lt;família de colunas&gt;’
-
-</code></pre>
-
-<h3  id="passo-3-inserir-valores-nas-colunas-da-tabela">Passo 3: Inserir valores nas colunas da tabela</h3>
-
-<pre><code>put ‘&lt;nome da tabela&gt;’, ‘&lt;row key&gt;’, ‘&lt;familia de colunas:coluna&gt;’, ‘&lt;valor&gt;’
-
-</code></pre>
+```
+put '<nome da tabela>', '<row key>', '<familia de colunas:coluna>', '<valor>'
+```
 
 
 ## Exercícios
