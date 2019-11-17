@@ -1,4 +1,4 @@
-# Conceitos e comandos e básicos
+# Conceitos e comandos e ásicos
 
 Por ser um banco de dados NoSQL, alguns conceitos são diferentes se comparados com um RDBMS comum, mas podemos fazer um paralelo entra a nomenclatura de cada um deles: 
 
@@ -39,9 +39,9 @@ RQL: `select <column>`
 - Exemplo:
 Retornar os nomes dos Produtos com preço por unidade = 15
 
-RQL: `from Products where PricePerUnit = 15 select Name`
+RQL: `from Products where PricePerUnit = 15 se a`
 
-SQL: `select Name from Products where PricePerUnit = 15`
+SQL: `select  from Products where PricePerUnit = 15`
 
 ### Cláusula `order by`
 RQL: `order by <column> as <DataType> <OrderingType>`
@@ -57,7 +57,7 @@ SQL: `select * from Products where PricePerUnit = 15 order by UnitsOnOrder`
 RQL: `group by <column>`
 
 - Exemplo:
-Retornar Fornecedores com mais de 15 produtos
+
 
 RQL: `from Products group by Supplier where count() > 15`
 
@@ -67,7 +67,7 @@ SQL: `select * from Products where count(Supplier) = 15 group by Supplier`
 
 Saiba mais sobre RQL em: https://ravendb.net/docs/article-page/4.2/csharp/indexes/querying/what-is-rql
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0MzIzMTM5NTgsLTQzOTg1MDEzOSw3OD
-c0MjI3MDMsMTA2MTc1MDEwMSwtMjA1NzkwNTMxOSwtNjc3NzA2
-NDQ3XX0=
+eyJoaXN0b3J5IjpbOTMzMjI4NjE1LC0xNDMyMzEzOTU4LC00Mz
+k4NTAxMzksNzg3NDIyNzAzLDEwNjE3NTAxMDEsLTIwNTc5MDUz
+MTksLTY3NzcwNjQ0N119
 -->

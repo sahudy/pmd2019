@@ -14,12 +14,13 @@ Para exemplificar iremos criar uma topologia de 3 nós sendo o nó **A** definid
 - Para subirmos as máquinas:
 	> $ sudo docker run --name <nome_do_nó> -d -p 8080:8081 -p 38888:38888 ravendb/ravendb
 	- Onde o primeiro parâmetro de porta (8080) refere-se a porta da máquina física e o segundo (8081) à porta do serviço _Docker_. Para criarmos várias máquinas basta variar o seu nome e porta de serviço.
-
-![enter image description here](https://lh3.googleusercontent.com/MgNJC99AoQCBJOjNjTcNeUJhisnHGXXEI4_zZZhRPM97eh55lO5dCfuvAhYbtD-FTMNzzPb51as)
+	
+![Todos os nós ativos](https://github.com/AndersonGarrote/PMD/blob/master/Disponibilidade/all.png?raw=true)
 
 Existem quatro tipos de nó:
 
- ![Tipos de nó](https://lh3.googleusercontent.com/uRTulWUIS99gzAZh4LWxYenhbIln2SIYEmf3LzglHeBlPU_Ab_MTfRAIN-AR5fJrjp2OjfBE5jQ)
+ ![Tipos de nó](https://github.com/AndersonGarrote/PMD/blob/master/Disponibilidade/Tipos.png?raw=true)
+
 - *Leader*: Nó líder do *Group Database*, é responsável por manter a saúde do _cluster_ e assegurar a consistência das decisões.
 - *Member*: Nó membro do *Group Database*, pode se tornar um Líder em caso de eleição.
 - *Watcher*: Nó membro com menos privilégios; não pode ser eleito como Líder em caso de votação, não participando do Quórum.
@@ -32,11 +33,11 @@ Ao derrubarmos o nó **A** teremos uma nova eleição que será realizada pelo q
 - Para derrubarmos um nó, removendo a máquina:
 	>  $ sudo docker stop <nome_do_nó>
 
-![enter image description here](https://lh3.googleusercontent.com/_Y01ZYw1RYHJqHdWXL8QSF6RBqicHRjaEIVhwjMkcWDwM-03O3RZouAY0HJ2PQy69bfoSLcBtZU)
+![Nó A inoperante](https://github.com/AndersonGarrote/PMD/blob/master/Disponibilidade/A_down.png?raw=true)
 
 Em um outro cenário onde **C** foi rebaixado, ficando como um _Watcher_. Ao derrubarmos o atual _Leader_ **B** o quórum de _Members_ não é suficiente para eleger outro nó, desta forma a eleição fica esperando um quórum suficiente (N/2 + 1):
 
-![enter image description here](https://lh3.googleusercontent.com/3nzanwWTxJskAwdI-GX9YnNXpGNwEmVgcajBcyU7a8xvMuFGtQf9vlCl3ioocI9tFTKkhVjdaN4)
+![Votação](https://github.com/AndersonGarrote/PMD/blob/master/Disponibilidade/Voting.png?raw=true)
 
 - Para voltarmos um nó ao funcionamento podemos excluir o nó que foi parado:
 	> $ sudo docker rm <nome_do_nó>
@@ -46,6 +47,7 @@ Fonte:[https://ravendb.net/docs/article-page/4.2/csharp/server/clustering/overvi
 
 > Written with [StackEdit](https://stackedit.io/).
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTc3NDM5MDE5NCwtMTE0ODM1MTIyOSwxMz
-g3NzczMzQ5LDIxNzA2NDY3NSwtMTc0MjcyMzQyN119
+eyJoaXN0b3J5IjpbLTE2NDcxNTYzNCwtOTcwMDcwOTQxLC03Nz
+QzOTAxOTQsLTExNDgzNTEyMjksMTM4Nzc3MzM0OSwyMTcwNjQ2
+NzUsLTE3NDI3MjM0MjddfQ==
 -->

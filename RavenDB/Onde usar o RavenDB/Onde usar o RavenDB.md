@@ -5,7 +5,7 @@ O RavenDB se destaca por ser um banco de dados orientado a documentos com caract
 - [Web Analytics](https://ravendb.net/articles/big-data-document-database-etl-replication-ravendb-case-study)
 
 Uma empresa de empregos da Inglaterra usou o RavenDB para uma aplicação onde era necessário garantir grande disponibilidade e operações ACID.
-- [Deeeoper natisttps://ravendb.net/articles/document-database-analytics-code-a-like-ravendb-case-study)
+- [Deeeeoper natisttps://ravendb.net/articles/document-database-analytics-code-a-like-ravendb-case-study)
 
 Software de monitoramento de desempenho de programadores, com grande quantidade de dados.
 
@@ -16,9 +16,9 @@ Empresa financeira que adotou a tecnologia pela velocidade de acesso aos dados e
 Fontes: https://ravendb.net/news/use-cases
 https://ayende.com/blog/136196/when-should-you-use-rae
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTY2MTc2NTU4LDEzMjk5OTMxOTUsLTkzND
-I4MDE0NiwxNzk3MTU3MDg0LDExMTk4OTA4NjksLTE0MDI4MDgx
-MzEsNjk3NTU5NCwtMzcwMTMxMTM5LDE3Nzc0Nzg0NzYsMTkwNz
-U4NDMxNywxOTkxNzg3NjE0LDExNDUzMjIxMDksLTE5NTg0NDUx
-ODNdfQ==
+eyJoaXN0b3J5IjpbLTE1NTI0MDA4MjEsMTY2MTc2NTU4LDEzMj
+k5OTMxOTUsLTkzNDI4MDE0NiwxNzk3MTU3MDg0LDExMTk4OTA4
+NjksLTE0MDI4MDgxMzEsNjk3NTU5NCwtMzcwMTMxMTM5LDE3Nz
+c0Nzg0NzYsMTkwNzU4NDMxNywxOTkxNzg3NjE0LDExNDUzMjIx
+MDksLTE5NTg0NDUxODNdfQ==
 -->
