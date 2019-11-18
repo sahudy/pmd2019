@@ -1,12 +1,12 @@
-# Tutorial - Couchbase
+# Tutorial Couchbase
 
 Maria Inês Corrêa de Paula Santos
 
 Priscila Portela Costa
 
-Versão utilizada: Couchbase Server 6.0.0 Community
-
 # Instalação e configuração do cluster
+
+Versão utilizada: Couchbase Server 6.0.0 Community
 
 ## Configuração local
 
@@ -45,19 +45,19 @@ Com isso, temos um cluster de 3 nós!
 
 ## Instalação na nuvem - Amazon Web Service (AWS)
 
-Para obtermos um cluster de 3 nós na nuvem, utilizaremos 3 instâncias [EC2](https://aws.amazon.com/pt/ec2/getting-started/), que serão criadas com as configurações padrão da Amazon. Neste tutorial, utilizaremos instâncias *Ubuntu Server 18.04 LTS (HVM), SSD Volume Type*. Você gerará automaticamente uma chave de segurança que será utilizada para acessar as instâncias. Salve-a em um local adequado com as permissões devidas (`chmod 400 minhachave.pem`). A figura abaixo mostra a tela onde se cria, renomeia e disponibiliza-se a chave para download:
+Para obtermos um cluster de 3 nós na nuvem, utilizaremos 3 instâncias [EC2](https://aws.amazon.com/pt/ec2/getting-started/), que serão criadas com as configurações padrão da Amazon. Neste tutorial, utilizaremos instâncias *Ubuntu Server 18.04 LTS (HVM), SSD Volume Type*. Você gerará automaticamente uma chave de segurança que será utilizada para acessar as instâncias. Salve-a em um local adequado com as permissões devidas (utilize o comando `chmod 400 minhachave.pem`). A figura abaixo mostra a tela onde se cria, renomeia e disponibiliza-se a chave para download:
 
-![](chave-97671742-660c-4a41-bde2-3ed36f86e841.png)
+![](imagem_8.png)
 
-A figura abaixo mostra o painel de controle da Amazon com as 3 instâncias criadas:
+A figura abaixo mostra o painel de controle das instâncias RDS da Amazon com as 3 instâncias criadas e ativas:
 
-![](painel-2efc65d1-06b9-4ab2-88c9-2332e72f98ae.png)
+![](imagem_3.png)
 
 Verifique o IP de cada máquina e acesse cada uma delas utilizando SSH:
 
     ssh  -i ~/<diretorio>/couchbase-tutorial.pem ubuntu@<ip-da-maquina>
 
-Ao acessar uma instância EC2, execute os comandos a seguir:
+Ao acessar cada instância EC2, execute os comandos a seguir:
 
     wget https://packages.couchbase.com/releases/6.0.0/couchbase-server-community_6.0.0-ubuntu16.04_amd64.deb
     sudo apt-get update
@@ -68,85 +68,85 @@ Com isso, todas as instâncias EC2 possuirão o Couchbase instalado.
 
 Uma vez que as instâncias foram criadas com as configurações padrão, será necessário alterar os [grupos de segurança](https://docs.aws.amazon.com/pt_br/AWSEC2/latest/UserGuide/using-network-security.html) de cada instância para que elas possam trocar informações entre si.
 
-A configuração do grupo de segurança da instância escolhida como *master* é ilustrada abaixo:
+A configuração do grupo de segurança da instância escolhida como inicial é ilustrada abaixo:
 
-![](Screen_Shot_2019-11-06_at_23-f2efcf6e-7f96-4284-9e6a-7336d7a83449.01.38.png)
+![](imagem_13.png)
 
-A configuração do grupo de segurança da instância escolhida como *slave1* é ilustrada abaixo:
+A configuração do grupo de segurança da instância escolhida como peer1 é ilustrada abaixo:
 
-![](Screen_Shot_2019-11-06_at_23-7ae7899a-7cb0-4607-b84d-88297fd662b6.02.43.png)
+![](imagem_11.png)
 
-A configuração do grupo de segurança da instância escolhida como *slave2* é ilustrada abaixo:
+A configuração do grupo de segurança da instância escolhida como peer2 é ilustrada abaixo:
 
-![](Screen_Shot_2019-11-06_at_23-3bff1603-b15e-4612-b241-bbe223a8658e.03.18.png)
+![](imagem_10.png)
 
-Com os grupos de segurança definidos, utilize o seguinte comando para acessar a instância master:
+Com os grupos de segurança definidos, utilize o seguinte comando para acessar a instância inicial:
 
-    ssh -i ~/<diretorio>/couchbase-tutorial.pem ubuntu@<ip-master> -L 8091:localhost:8091
+    ssh -i ~/<diretorio>/couchbase-tutorial.pem ubuntu@<ip-inicial> -L 8091:localhost:8091
 
 Acessando o [http://localhost:8091](http://localhost:8091/), será vista a tela inicial da interface do Couchbase. Ao clicar em *New Cluster*, será aberta a tela a seguir. Escolha nomes adequados para seu uso e salve a senha escolhida.
 
-![](new_cluster-1fd6385d-a368-4ea6-8172-a9b7647b67a0.png)
+![](imagem_2.png)
 
 Com isso, temos um servidor Couchbase de um nó!
 
 ## Adicionando um nó
 
-Acesse a instância utilizada como slave-1 e inicie a interface com o seguinte comando:
+Acesse a instância utilizada como peer-1 e inicie a interface com o seguinte comando:
 
     ssh -i ~/<diretorio>/couchbase-tutorial.pem ubuntu@<ip> -L 8091:localhost:8091
 
 A tela inicial do Couchbase abrirá novamente. Ao clicar em *Join Cluster*, temos a imagem a seguir. Insira as informações corretas e clique em *Join with default configurations.*
 
-![](Screen_Shot_2019-11-06_at_23-689f144c-e2e6-41a0-942a-b0da608e6841.14.30.png)
+![](imagem_12.png)
 
 Repita o mesmo processo para inserir a outra instância no cluster. Com isso, temos um cluster de 3 nós!
 
 A figura abaixo mostra a tela inicial do painel de controle do Couchbase, com o número de nós ativos, nós inativos e se há necessidade de rebalanceamento.
 
-![](painel_3-7e49b180-06f3-451c-9115-aaf10a6b2ae8.png)
+![](imagem_4.png)
 
 ## Inserindo dados
 
 Para inserir informações no banco de dados e posteriormente balancear, clique em *Buckets* e carregue um *sample bucket*. Neste tutorial, utilizaremos os documentos do `beer-sample`.
 
-![](bucket-8c6dc072-6589-4cec-bed6-03317bdfb240.png)
+![](imagem_9.png)
 
 ## Rebalanceamento
 
 Após inserir as informações do banco de dados, devemos rebalancear a carga de informações entre as instâncias. Clique em *Servers* e inicie o rebalanceamento utilizando o botão *Rebalance*. A figura abaixo mostra o processo de rebalancemento.
 
-![](rebal-211b3c47-b3fd-4cb0-a75f-d56242fd9ebe.png)
+![](imagem_5.png)
 
 # Visão Geral
 
 O *Couchbase* é a fusão de duas tecnologias NoSQL: o **Membase**, que fornece persistência, replicação e *sharding* para a tecnologia *memcached* de alto desempenho e o **[CouchDB](https://couchdb.apache.org/)**, pioneiro no modelo orientado a documentos baseado em JSON.
 
-Os dados armazenados no Couchbase possuem a forma de documentos JSON de formato livre, sendo suas coleções chamadas de *keyspaces*. 
-
-No Couchbase, um documento geralmente representa uma única instância na aplicação. É possível traçar paralelos com banco de dados relacionais, no qual uma linha seria semelhante a um documento e os atributos são semelhantes às colunas.
+Os dados armazenados no Couchbase possuem a forma de documentos JSON de formato livre, sendo suas coleções chamadas de *keyspaces*. É possível traçar paralelos com banco de dados relacionais, no qual uma linha seria semelhante a um documento e os atributos são semelhantes às colunas.
 
 Entretanto, por não se tratar de um banco de dados relacional, é possível guardar documentos de diversas formas (*schemas)* no Couchbase*.* Dessa forma, a uniformidade entre documentos não é garantida e não há proximidade lógica entre os objetos em um *keyspace*.
 
-É possível interagir com o Couchbase pelo CLI, pela interface e por uma API.
+É possível interagir com o Couchbase pelo CLI, pela interface e por uma [API](https://pt.wikipedia.org/wiki/Interface_de_programa%C3%A7%C3%A3o_de_aplica%C3%A7%C3%B5es).
 
-A linguagem utilizada pelo Couchbase se chama N1QL, e as maiores diferenças entre o N1QL e o SQL são relativas a modelagem dos dados (já mencionada anteriormente), a seleção, filtragem e projeção dos dados. Os comandos serão detalhados na etapa de Exercícios, onde utilizaremos os dados do `beer-sample`, com uma série de documentos pré-carregados pelo Couchbase para uso didático. 
+A linguagem utilizada pelo Couchbase se chama N1QL, e as maiores diferenças entre o N1QL e o SQL são relativas a modelagem dos dados (já mencionada anteriormente), a seleção, filtragem e projeção dos dados. Assim como a linguagem SQL, é possível especificar os tipos de junção em uma consulta SQL (`inner`, `left` e `right join`). Os comandos serão detalhados na etapa de Exercícios, onde utilizaremos os dados do `beer-sample`, com uma série de documentos pré-carregados pelo Couchbase para uso didático.
 
 # Arquiteturas de distribuição de dados e replicação
 
-Semelhante a outras tecnologias NoSQL, o Couchbase é construído com base em uma arquitetura distribuída funcionando desde o início com dados agrupados em *cluster*, com escalonamento horizontal. Dessa forma, o banco de dados reside em um *cluster* de servidor que envolve várias máquinas e a biblioteca do cliente que irá se conectar aos servidores apropriados para poder acessar os dados.
+Semelhante a outras tecnologias NoSQL, o Couchbase é construído com base em uma arquitetura distribuída *(peer-to-peer)* funcionando desde o início com dados agrupados em *cluster*, com a possibilidade de escalonamento horizontal. Dessa forma, o banco de dados reside em um *cluster* de servidor que envolve várias máquinas e a biblioteca do cliente que irá se conectar aos servidores apropriados para poder acessar os dados.
 
-![](Mquina_1-078cd72e-d9ce-417b-a309-5a0f1519366e.png)
+![](imagem_1.png)
 
-Para facilitar esse dimensionamento horizontal, o Couchbase usa *shard sharding*, o que garante que os dados sejam distribuídos uniformemente por todos os nós. O sistema define 1024 partições - 1024 *vBuckets* (um número fixo) e, depois que a chave de um documento é dividida em uma partição específica, é onde o documento fica.
+Internamente, o Couchbase usa um mecanismo chamado de vBuckets (semelhantes aos *shards* ou partições) para distribuir automaticamente os dados pelos nós, sendo esse processo chamado de *auto-sharding*. Os *vBuckets* permitem a replicação, a falha e a configuração dinâmica do conjunto de nós. Os usuários e as aplicações não manipulam os vBuckets diretamente. O Couchbase divide automaticamente cada *bucket* em 1024 *vBuckets* ativos, com 1024 vBuckets por réplica distribuídos igualmente pelos nós. Os *vBuckets* não possuem uma localização física nos nós e, portanto, é necessário um mapeamento de *vBuckets* nos nós (conhecido como mapa do *cluster*)
 
-![](xx-af9d527a-fe15-4890-8dab-56dfccf08312.png)
+Para definir, mapear e localizar onde estão os documentos e os *vBuckets*, o Couchbase utiliza um algoritmo de *[hashing](https://pt.wikipedia.org/wiki/Fun%C3%A7%C3%A3o_hash)* chamado CRC32 nas chaves dos documentos e também na lista de vBuckets (*[shards](https://pt.wikipedia.org/wiki/Shard_(arquitetura_de_banco_de_dados))*) responsáveis por uma determinada chave.
+
+![](imagem_7.png)
 
 Fonte: OBJELEAN, A. 2019 (adaptado).
 
 Todos os servidores de partição em um *cluster* do Couchbase são iguais, sendo cada um responsável apenas pela parte dos dados que foi atribuída a ele. Cada servidor em um cluster executa dois processos principais: um gerenciador de dados e um gerenciador de *cluster.* O gerenciador de dados lida com os dados reais na partição, enquanto o gerenciador de *cluster* lida principalmente com operações entre modos.
 
- A replicação dos documentos é a resiliência do sistema, o processo do gerenciador de *cluster* coordena a comunicação dos dados de replicação com os nós remotos, e o processo do gerenciador de dados supervisiona os dados da réplica que estão sendo designados pelo cluster ao nó local. Naturalmente, as partições de réplica são distribuídas por todo o cluster, para que a cópia da réplica de uma partição nunca esteja no mesmo servidor físico que a partição ativa.
+A replicação dos documentos é a resiliência do sistema, o processo do gerenciador de *cluster* coordena a comunicação dos dados de replicação com os nós remotos, e o processo do gerenciador de dados supervisiona os dados da réplica que estão sendo designados pelo cluster ao nó local. Naturalmente, as partições de réplica são distribuídas por todo o cluster, para que a cópia da réplica de uma partição nunca esteja no mesmo servidor físico que a partição ativa.
 
 Os documentos são colocados em *buckets* e os documentos em um *bucket* são isolados dos documentos em outros *buckets* da perspectiva das operações de indexação e consulta. Quando um novo dado é criado, é possível configurar o número de réplicas (até três) para esse depósito. Se um servidor travar, o sistema detectará a falha, localizará as réplicas dos documentos que residiam no sistema travado e as promoverá para o status ativo. O sistema mantém um mapa de *cluster*, que define a topologia do cluster, e isso é atualizado em resposta à falha.
 
@@ -188,15 +188,17 @@ O Couchbase permite que você altere a configuração padrão para definir um ma
 
 # Consistência entre nós
 
-O Couchbase garante a consistência fazendo com que todos os processos de leitura e escrita em um documento específico passem por um mesmo nó no cluster. Views e índices possuem consistência eventual em relação aos documentos.
+O Couchbase garante a consistência fazendo com que todos os processos de leitura e escrita de um documento específico passem por um mesmo nó no cluster. Views e índices possuem consistência eventual em relação aos documentos.
 
 Todas as mudanças em uma chave são realizadas utilizando um mesmo *vBucket* no nó e estão disponíveis para todos que estão lendo o valor mais recente relacionado com aquela chave.
 
-Ao se realizar uma consulta N1QL, é possível especificar uma das *flags* de consistência abaixo, sendo o valor padrão como `not_bounded`:
+Ao se realizar uma consulta N1QL em vários documentos, é possível especificar uma das *flags* de consistência abaixo, sendo o valor padrão como `not_bounded`:
 
 - `not_bounded`: a consulta é executada sem nenhuma verificação de consistência, e é possível que o resultado obtido pela consulta esteja desatualizado;
 - `at_plus`:  a consulta é feita garantindo que os índices estejam atualizados em relação à última atualização realizada pela aplicação.
 - `request_plus`: a consulta é feita garantindo que os índices estejam atualizados em relação ao *timestamp* relativo à consulta N1QL. É possível que haja um *delay* maior para uma consulta com essa flag.
+
+As operações de escrita são guardadas em memória, são enviadas ao disco e replicadas para os outros nós de forma assíncrona, sendo o servidor informado em caso de sucesso ou erro na operação.
 
 # Disponibilidade
 
@@ -225,16 +227,16 @@ Para se escalar o servidor na arquitetura proposta, será necessário executar o
     1. Pela interface: ver seção Adicionando um nó
     2. Pelo CLI: 
 
-        couchbase-cli server-add -c <ip-master>:8091 --username <user-master> \
+        couchbase-cli server-add -c <ip-inicial>:8091 --username <user-inicial> \
          --password <senha> --server-add <ip-novo-nó>:8091 \
-         --server-add-username <user-master> --server-add-password <senha>
+         --server-add-username <user-inicial> --server-add-password <senha>
          --services data,index,query
 
 5. Realizar o rebalanceamento
     1. Pela interface: ver seção Rebalanceamento
     2. Pelo CLI:
 
-        couchbase-cli rebalance -c <ip-master>:8091 --username <user-master> \
+        couchbase-cli rebalance -c <ip-inicial>:8091 --username <user-inicial> \
          --password <senha>
 
 ## Removendo um nó
@@ -250,7 +252,7 @@ Pela interface:
 
 Pelo CLI:
 
-    couchbase-cli rebalance -c <ip-master>:8091 --username <user-master> \
+    couchbase-cli rebalance -c <ip-inicial>:8091 --username <user-inicial> \
      --password <senha> --server-remove <ip-nó-removido>:8091
 
 # Exemplos de empresa que utilizam o Couchbase
@@ -271,18 +273,18 @@ A [Tesco](https://www.tesco.com/), maior varejista da Europa, está adotando o C
 
 A [Ryanair](https://www.ryanair.com/pt/pt/), uma das maiores e mais bem-sucedidas companhias aéreas da Europa, está reformulando seu aplicativo móvel para suportar mais de 1 milhão de viajantes, passando de um banco de dados relacional para o NoSQL usando o Couchbase Mobile. A empresa queria superar as limitações da tecnologia relacional para melhorar significativamente a qualidade, disponibilidade e funcionalidade de seu aplicativo móvel e fornecer uma ótima experiência para os usuários móveis. 
 
-## **Plataformas de Antifraude**
+## **Plataforma de Antifraude**
 
 Uma plataforma líder de detecção de fraudes, que processa mais de 50% das transações com cartões de crédito e débito no mundo, é operada pelo Couchbase Server. A empresa selecionou o Couchbase Server como um banco de dados distribuído para a plataforma de detecção de fraude, porque seu cache integrado na memória permite acesso de menos de milissegundos aos dados do cliente e regras de detecção de fraude, e porque pode ser escalado com um número crescente de portadores de cartão e transações. de uma maneira econômica. clientes que realizam bilhões de transações por ano, em tempo real. 
 
 # Quando utilizar o Couchbase? ✅
 
-- Necessidade de escalabilidade dinâmica e *load balancing*;
-- Aplicações de Data Lake;
+- Necessidade de escalabilidade dinâmica e **balanceamento de carga constantes;
+- Aplicações de *[Data Lake](https://medium.com/data-hackers/o-guia-semi-definitivo-para-data-lakes-461b1878697f)*;
 - Número de campos dinâmico;
 - Necessidade de operações realizadas de forma rápida;
 - Atividades de usuário em tempo real;
-- IOT ( "Internet das coisas");
+- [Internet das coisas](https://pt.wikipedia.org/wiki/Internet_das_coisas);
 - Detecção de fraudes.
 
 # Quando não utilizar o Couchbase? ❌
@@ -294,9 +296,9 @@ Uma plataforma líder de detecção de fraudes, que processa mais de 50% das tra
 - Contato frequente com usuário final: chaves com nomes descritivos ocupam espaço e aumentam o tempo de processamento;
 - A aplicação não trata inconsistências.
 
-# Exercícios
+# Exercícios - N1QL
 
-Os exercícios a seguir utilizarão os documentos obtidos do `beer-sample:`
+Os exercícios a seguir utilizarão os documentos obtidos do `beer-sample`:
 
 1. Quais as cervejas feitas pela cervejaria de id "mishawaka_brewing"?
 
@@ -338,23 +340,21 @@ Os exercícios a seguir utilizarão os documentos obtidos do `beer-sample:`
 # Glossário
 
 1. *Docker:* plataforma open source de contêineres.
-2. *Bucket:* são contêineres virtuais isolados que agrupam logicamente registros em um cluster.
-3. S*ample-bucket :* onde se encontram os dados prontos para serem experimentados.
-4. *Cluster:* A arquitetura de cluster de banco de dados é formada pela redundância do seu banco de dados em 2 instâncias ou mais instâncias. Estas instâncias, então, são balanceadas de forma a dividir com eficiência a quantidade de requisições ao banco.
-5. S*harding:* é uma forma de particionamento para distribuir a carga de trabalho computacional e de armazenamento em uma rede ponto a ponto (point- to point) para que cada nó não seja responsável pelo processamento da carga transacional de toda a rede*.*
-6. *JSON ou JavaScript Object Notation*: é um modelo para armazenamento e transmissão de informações no formato texto. É simples e estrutura as informações de uma forma bem mais compacta do que a conseguida pelo modelo XML, tornando mais rápida a análise dessas informações.
-7. *Shard sharding*: é a junção de *shard*, uma partição horizontal de dados em um banco de dados, juntamente com o *sharding* já explicado no item 5.
-8. *Memcached:* Armazenamento em memória de conjuntos chave-valor para pequenos conjuntos de dados resultantes de requisições de API ou de consultas de banco de dados.
-9. *vBucket:* é definido como o proprietário de um subconjunto do espaço da chave de um cluster do Couchbase. O sistema vBucket é usado para distribuir dados pelo cluster e para oferecer suporte a réplicas em mais de um nó. As vezes podem ser chamados de às vezes de shards e são criados 1024 para cada bucket, esses 1024 implementam um intervalo definido e são referidos como vBuckets ativos . Se um bucket for replicado, cada réplica será implementada como mais 1024 (ou 64) vBuckets, denominados vBuckets de réplica.
+2. *Bucket:* são contêineres virtuais isolados que agrupam logicamente registros em um cluster. São semelhantes a um *schema* de um banco de dados relacional.
+3. *Cluster:* A arquitetura de cluster de banco de dados é formada pela redundância do seu banco de dados em 2 instâncias ou mais instâncias. Estas instâncias, então, são balanceadas de forma a dividir com eficiência a quantidade de requisições ao banco.
+4. S*harding:* é uma forma de particionamento para distribuir a carga de trabalho computacional e de armazenamento em uma rede ponto a ponto para que cada nó não seja responsável pelo processamento da carga transacional de toda a rede*.*
+5. *JSON ou JavaScript Object Notation*: é um modelo para armazenamento e transmissão de informações no formato texto. É simples e estrutura as informações de uma forma bem mais compacta do que a conseguida pelo modelo XML, tornando mais rápida a análise dessas informações.
+6. *Memcached:* Armazenamento em memória de conjuntos chave-valor para pequenos conjuntos de dados resultantes de requisições de API ou de consultas de banco de dados.
+7. *vBucket:* Sinônimo de *[shard](https://pt.wikipedia.org/wiki/Shard_(arquitetura_de_banco_de_dados))*
 
-    ![](vbucket-9f740824-c4ab-4ae7-8f6b-732bcc4b6ddf.png)
+    ![](imagem_6.png)
 
     Fonte: couchbase (adaptado).
 
 # Referências
 
-COUCHBASE. Documentação oficial. Disponível em : [link](https://docs.couchbase.com/server/6.0/getting-started/start-here.html). Acessado em : outubro de 2019.
+COUCHBASE. Documentação oficial. Disponível em : [link](https://docs.couchbase.com/server/6.0/getting-started/start-here.html). Acessado em: outubro de 2019.
 
-COUCHBASE. The TOP 10 Enterprise NoSQL uses cases. Diponível em: [link](https://resources.couchbase.com/c/top-10-nosql-usecases?x=SxFI6d). Acessado em outubro de 2019.
+COUCHBASE. The TOP 10 Enterprise NoSQL uses cases. Disponível em: [link](https://resources.couchbase.com/c/top-10-nosql-usecases?x=SxFI6d). Acessado em outubro de 2019.
 
 OBJELEAN, A. Introduction to Couchbase - NoSQL Document Database. Disponível em: [link](https://www.todaysoftmag.com/article/1506/introduction-to-couchbase-nosql-document-database). Acessado em: outubro de 2019.
