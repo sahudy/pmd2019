@@ -45,13 +45,13 @@ Com isso, temos um cluster de 3 nós!
 
 ## Instalação na nuvem - Amazon Web Service (AWS)
 
-Para obtermos um cluster de 3 nós na nuvem, utilizaremos 3 instâncias [EC2](https://aws.amazon.com/pt/ec2/getting-started/), que serão criadas com as configurações padrão da Amazon. Neste tutorial, utilizaremos instâncias *Ubuntu Server 18.04 LTS (HVM), SSD Volume Type*. Você gerará automaticamente uma chave de segurança que será utilizada para acessar as instâncias. Salve-a em um local adequado com as permissões devidas (utilize o comando `chmod 400 minhachave.pem`). A figura abaixo mostra a tela onde se cria, renomeia e disponibiliza-se a chave para download:
+Para obtermos um cluster de 3 nós na nuvem, utilizaremos 3 instâncias [EC2](https://aws.amazon.com/pt/ec2/getting-started/), que serão criadas com as configurações padrão da Amazon. Neste tutorial, utilizaremos instâncias *Ubuntu Server 18.04 LTS (HVM), SSD Volume Type*. Você gerará automaticamente uma chave de segurança que será utilizada para acessar as instâncias. Salve-a em um local adequado com as permissões devidas (utilize o comando `chmod 400 minhachave.pem`). A figura abaixo mostra a tela onde se cria, renomeia e disponibiliza-se a chave para download.
 
-![](./imagem_8.png)
+![](https://i.imgur.com/IaQERxN.png)
 
 A figura abaixo mostra o painel de controle das instâncias RDS da Amazon com as 3 instâncias criadas e ativas:
 
-![](./imagem_3.png)
+![](https://i.imgur.com/pWFFv2T.png)
 
 Verifique o IP de cada máquina e acesse cada uma delas utilizando SSH:
 
@@ -70,15 +70,15 @@ Uma vez que as instâncias foram criadas com as configurações padrão, será n
 
 A configuração do grupo de segurança da instância escolhida como inicial é ilustrada abaixo:
 
-![](./imagem_13.png)
+![](https://i.imgur.com/fjLd4l7.png)
 
 A configuração do grupo de segurança da instância escolhida como peer1 é ilustrada abaixo:
 
-![](./imagem_11.png)
+![](https://i.imgur.com/cTJJYXG.png)
 
 A configuração do grupo de segurança da instância escolhida como peer2 é ilustrada abaixo:
 
-![](./imagem_10.png)
+![](https://i.imgur.com/J7d56lj.png)
 
 Com os grupos de segurança definidos, utilize o seguinte comando para acessar a instância inicial:
 
@@ -86,7 +86,7 @@ Com os grupos de segurança definidos, utilize o seguinte comando para acessar a
 
 Acessando o [http://localhost:8091](http://localhost:8091/), será vista a tela inicial da interface do Couchbase. Ao clicar em *New Cluster*, será aberta a tela a seguir. Escolha nomes adequados para seu uso e salve a senha escolhida.
 
-![](./imagem_2.png)
+![](https://i.imgur.com/qoEngKn.png)
 
 Com isso, temos um servidor Couchbase de um nó!
 
@@ -98,25 +98,25 @@ Acesse a instância utilizada como peer-1 e inicie a interface com o seguinte co
 
 A tela inicial do Couchbase abrirá novamente. Ao clicar em *Join Cluster*, temos a imagem a seguir. Insira as informações corretas e clique em *Join with default configurations.*
 
-![](./imagem_12.png)
+![](https://i.imgur.com/LJkdKLA.png)
 
 Repita o mesmo processo para inserir a outra instância no cluster. Com isso, temos um cluster de 3 nós!
 
 A figura abaixo mostra a tela inicial do painel de controle do Couchbase, com o número de nós ativos, nós inativos e se há necessidade de rebalanceamento.
 
-![](./imagem_4.png)
+![](https://i.imgur.com/rAmxv3D.png)
 
 ## Inserindo dados
 
 Para inserir informações no banco de dados e posteriormente balancear, clique em *Buckets* e carregue um *sample bucket*. Neste tutorial, utilizaremos os documentos do `beer-sample`.
 
-![](./imagem_9.png)
+![](https://i.imgur.com/2vNM33h.png)
 
 ## Rebalanceamento
 
 Após inserir as informações do banco de dados, devemos rebalancear a carga de informações entre as instâncias. Clique em *Servers* e inicie o rebalanceamento utilizando o botão *Rebalance*. A figura abaixo mostra o processo de rebalancemento.
 
-![](./imagem_5.png)
+![](https://i.imgur.com/5G0VaWH.png)
 
 # Visão Geral
 
@@ -134,15 +134,13 @@ A linguagem utilizada pelo Couchbase se chama N1QL, e as maiores diferenças ent
 
 Semelhante a outras tecnologias NoSQL, o Couchbase é construído com base em uma arquitetura distribuída *(peer-to-peer)* funcionando desde o início com dados agrupados em *cluster*, com a possibilidade de escalonamento horizontal. Dessa forma, o banco de dados reside em um *cluster* de servidor que envolve várias máquinas e a biblioteca do cliente que irá se conectar aos servidores apropriados para poder acessar os dados.
 
-![](./imagem_1.png)
+![](https://i.imgur.com/Ao9v816.png)
 
 Internamente, o Couchbase usa um mecanismo chamado de vBuckets (semelhantes aos *shards* ou partições) para distribuir automaticamente os dados pelos nós, sendo esse processo chamado de *auto-sharding*. Os *vBuckets* permitem a replicação, a falha e a configuração dinâmica do conjunto de nós. Os usuários e as aplicações não manipulam os vBuckets diretamente. O Couchbase divide automaticamente cada *bucket* em 1024 *vBuckets* ativos, com 1024 vBuckets por réplica distribuídos igualmente pelos nós. Os *vBuckets* não possuem uma localização física nos nós e, portanto, é necessário um mapeamento de *vBuckets* nos nós (conhecido como mapa do *cluster*)
 
 Para definir, mapear e localizar onde estão os documentos e os *vBuckets*, o Couchbase utiliza um algoritmo de *[hashing](https://pt.wikipedia.org/wiki/Fun%C3%A7%C3%A3o_hash)* chamado CRC32 nas chaves dos documentos e também na lista de vBuckets (*[shards](https://pt.wikipedia.org/wiki/Shard_(arquitetura_de_banco_de_dados))*) responsáveis por uma determinada chave.
 
-![](./imagem_7.png)
-
-Fonte: OBJELEAN, A. 2019 (adaptado).
+![](https://i.imgur.com/4SpLln9.png)
 
 Todos os servidores de partição em um *cluster* do Couchbase são iguais, sendo cada um responsável apenas pela parte dos dados que foi atribuída a ele. Cada servidor em um cluster executa dois processos principais: um gerenciador de dados e um gerenciador de *cluster.* O gerenciador de dados lida com os dados reais na partição, enquanto o gerenciador de *cluster* lida principalmente com operações entre modos.
 
@@ -347,9 +345,7 @@ Os exercícios a seguir utilizarão os documentos obtidos do `beer-sample`:
 6. *Memcached:* Armazenamento em memória de conjuntos chave-valor para pequenos conjuntos de dados resultantes de requisições de API ou de consultas de banco de dados.
 7. *vBucket:* Sinônimo de *[shard](https://pt.wikipedia.org/wiki/Shard_(arquitetura_de_banco_de_dados))*
 
-    ![](./imagem_6.png)
-
-    Fonte: couchbase (adaptado).
+    ![](https://i.imgur.com/hc3CoOW.png)
 
 # Referências
 
