@@ -1,6 +1,28 @@
 # AEROSPIKE
 
-O Aerospike é um banco de dados NoSQL  Key-Value distribuído, desenhado para aplicações que devem estar sempre disponíveis e lidar com big data de maneira confiável.
+### Tabela de conteúdo
+
+* [Introdução](#Introdução)
+    * [Instalação e configuração no Ubuntu 18.04+](###Instalação%20e%20configuração%20no%20Ubuntu%2018.04+)
+    * [Instalação e configuração no MAC OS X](###Instalação%20e%20configuração%20no%20MAC%20OS%20X)
+* [Modelo de Dados](##Modelo%20de%20Dados)
+    * [Como interagir com o sistema?](###Como%20interagir%20com%20o%20sistema?)
+* [Comandos Básicos: Aerospike Query Language (AQL)](##Comandos%20Básicos:%20Aerospike%20Query%20Language%20(AQL))
+* [Arquitetura](##Arquitetura)
+    * [Distribuição de dados](###Distribuição%20de%20dados)
+    * [Replicação](###Replicação)
+* [Implementação de propriedades](##Implementação%20de%20propriedades)
+    * [Transações](###Transações)
+    * [Consistência](###Consistência)
+    * [Disponibilidade](###Disponibilidade)
+    * [Escalabilidade](###Escalabilidade)
+* [Quando usar?](##Quando%20usar?)
+* [Glossário de Termos](##Glossário%20de%20Termos)
+
+
+
+# Introdução
+O Aerospike uma ferramenta de banco de dados NoSQL chave-valor, desenhada para aplicações que devem estar sempre disponíveis e lidar com big data de maneira confiável.
 
 Desenvolvida em C, opera em três camadas: Uma camada de dados, uma camada de distribuição autogerenciada (o *"Aerospike Smart Cluster"*) e uma camada de cliente (o *"Aerospike Smart Client"*).
 
@@ -14,7 +36,7 @@ A camada de dados é otimizada para armazenar os dados em discos rígidos e mem�
 |:--:| 
 | *Arquitetura do Aerospike* |
 
-Para o desenvolvimento deste documento e exemplos, utilizamos versão ```4.7.0.2``` do Aerospike.
+Para o desenvolvimento deste documento e exemplos, utilizamos versão ```4.7.0.2``` e todo o conteúdo foi baseado na documentação do Aerospike, disponível em https://www.aerospike.com/docs.
 
 ### Instalação e configuração no Ubuntu 18.04+
 Nesta parte do tutorial ensinaremos como fazer a instalação do Aerospike e configuração para Ubuntu 18.04 ou mais recente.
@@ -97,7 +119,7 @@ No MAC OS, o Aerospike funciona dentro de um ambiente virtual, por isso, é nece
     ``` sudo service aerospike start ``` 
     ``` sudo service amc start ```
 
-### Modelo de Dados
+## Modelo de Dados
 O modelo de dados do Aerospike é *schema-less*, com registros podendo ser adicionados com campos novos sem que o esquema dos dados inseridos anteriormente tenha que ser alterado. Abaixo, são descritos os conceitos de *namespaces*, *sets*, *records* *bins* e *keys*, utilizados pelo Aerospike.
 
 Aerospike   | RDBMS
@@ -146,7 +168,7 @@ Outra maneira, é através do (*Aerospike Query Client*), utilizando a AQL (*Aer
 |:--:| 
 | *Imagem de um terminal rodando o AQC* |
 
-### Comandos Básicos: Aerospike Query Language (AQL)
+## Comandos Básicos: Aerospike Query Language (AQL)
 O Aerospike possui sua própria linguagem para realizar manipulações no banco e efetuar pesquisas, a Aerospike Query Language (AQL), baseada no SQL. Ela é utilizada no terminal, a partir do Aerospike Query Client (AQC).
 
 ##### Inicializando o AQC 
@@ -416,7 +438,7 @@ Este exemplo remove a chave mykey do namespace test no set myset.
 ## Arquitetura
 No Aerospike, cada requisição é satisfeita por um único nó, que armazena e é o responsável (mestre) de uma parte do total de dados. Essa arquitetura cria um sistema sem um ponto único de falha, e permite a escalabilidade horizontal. Para aumentar a disponibilidade e a confiabilidade, o Aerospike também replica os dados em diferentes nós.
 
-### Distribuição
+### Distribuição de dados
 No Aerospike, cada *namespace* é dividido em 4096 partições lógicas, que são divididas igualmente entre os n nós do *cluster*. Ou seja, quando não há réplicas dos dados (fator de replicação igual a 1), cada nó armazena aproximadamente 
 1/n dos dados.
 
@@ -441,7 +463,7 @@ Para o caso de fator de replicação 2, por exemplo, além das 1/n partições d
 ## Implementação de propriedades
 Conforme o teorema CAP, o Aerospike, até a versão 3.0, é um banco de dados AP - isto é, oferece disponibilidade ao invés de consistência, em casos de partição de rede. O Aerospike 3.0 não fornece diversas funcionalidades que são necessárias para consistência de replicação durante uma transação. Em vez disso, permite que o dado esteja disponível e aceitando escritas - criando, eventualmente, conflitos de escrita. O processo de escolher uma versão do dado para ser persistida, em caso de versões conflitantes, pode resultar em perda de dado.
 
-À partir da versão 4.0, o Aerospike suporta tanto o modo AP (Disponível e Tolerante à partição), quanto o modo CP (Consistente e Tolerante à partição). Sendo o modo configurado através das políticas do “namespace”.
+À partir da versão 4.0, o Aerospike suporta tanto o modo AP (Disponível e Tolerante à partição), quanto o modo CP (Consistente e Tolerante à partição). Esse modo, chamado de "consistência forte", é ativado por uma configuração do *namespace*.
 
 ### Transações
 Como citado anteriormente, até sua versão 3.0, era suportado apenas o modo AP (disponibilidade sobre consistência). Com isso, em caso de partição de rede, qualquer partição se colocaria como dono de todos os dados (que estivessem disponíveis nos nós do "sub-cluster"). Quando o problema da partição fosse resolvido, conflitos aconteceriam, causando perda de dados.
@@ -498,10 +520,10 @@ Além disso, vale ressaltar algumas tecnologias utilizadas pelo Aerospike para g
 Além de tudo isso, os *updates* do *software* são realizados de maneira que não ocorram problemas de compatibilidade entre versões. Assim não é necessário um *downtime* para que ocorra a atualização.
 
 ### Escalabilidade
-Devido a arquitetura *shared-nothing*, basta apenas adicionar novos nós ao cluster. Ela permite escalabilidade horizontal em todas as camadas da aplicação. Esse é um dos maiores diferenciais de Aerospike sobre outros bancos, que não se preocupam tanto com a escalabilidade, e quando chegam em seu limite causam danos aos clientes de seus serviços, e no fim a equipe desenvolvedora vai gastar mais tempo e dinheiro para atualizar a aplicação. E ainda assim é só uma questão de tempo até o mesmo problema acontecer e o processo se iniciar de novo.
+Devido a sua capacidade de replicação para que escalar basta apenas adicionar novos nós ao cluster. Ela permite escalabilidade horizontal em todas as camadas da aplicação.
 
-### Quando usar?
-O Aerospike foi desenhado para aplicações que devem estar sempre disponíveis e lidar com big data de maneira rápida e confiável. A seguir veremos alguns [casos de uso] e exemplos de empresas que o utilizam no dia a dia de suas operações.
+## Quando usar?
+O Aerospike foi desenhado para aplicações que devem estar sempre disponíveis e lidar com big data de maneira rápida e confiável. A seguir veremos alguns casos de uso e exemplos de empresas que o utilizam no dia a dia de suas operações.
 
 * Substituição de cache
     Latência baixa e alto rendimento são características do Aerospike e fazem com que ele seja um ótimo candidato para substitui o cache. Quando existe um grande número de dados dinâmicos é necessária a decisão entre guardar dados em cache, e assim abrir espaço para eventuais inconsistências de dados, ou fazer muitas consultas lentas. O Aerospike funciona com o sistema chave-valor que possui grande foco na rapidez e simplicidade, com caminho mais direto para o disco ou memória na busca dos dados, e por isso o seu uso pode substituir o uso de cache. Empresas como a KAYAK, uma ferramenta de busca especializada em viagens, utilizam o Aerospike desta forma em suas buscas.
@@ -512,13 +534,9 @@ O Aerospike foi desenhado para aplicações que devem estar sempre disponíveis 
 * Mecanismo de recomendação
     Mecanismos de recomendação exigem uma camada de dados rápida, para suportar muitas requisições sem grande impacto para o usuário, e flexível, já que a base tende a crescer rapidamente. O Aerospike funciona muito bem neste contexto e a utilização dele no mercado acontece em diversas empresas de publicidade e e-commerces. 0 Aerospike possui até mesmo um modelo open source de criação de um mecanismo de recomendação usando suas ferramentas, RESTful Web Service e Spring Boot.
 
-* [Teste do link] 
-
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen)
-[Teste do link]: <https://twitter.com/littleis13>
-[casos de uso]: <https://www.aerospike.com/solutions/technology/use-cases/>
 
-### Glossário de Termos
+## Glossário de Termos
 
 * *Schemaless*: Não segue uma estrutura pré-definida ou específica. Não estruturado.
 
@@ -542,7 +560,7 @@ O Aerospike foi desenhado para aplicações que devem estar sempre disponíveis 
 
 * *RIPEMD160*: Uma função hash de distribuição aleatória.
 
-* *Sharding*: Arquitetura de banco de dados, onde os dados podem ser espalhado por várias máquinas. Equivalente a “Share-nothing”.
+* *Sharding*: Arquitetura de banco de dados, onde os dados podem ser espalhado por várias máquinas.
 
 * *Hot spots*: Um ponto único de falha. Um ponto/local de onde muitos dados são processados ou requisitados.
 
@@ -554,8 +572,5 @@ O Aerospike foi desenhado para aplicações que devem estar sempre disponíveis 
 
 * *Full Linearizable*: Que pode ser feito de maneira sequencial. Pode ser linearizado/ordenado.
 
-* *Shared-nothing*: Arquitetura de computação distribuída onde cada requisição é satisfeita por um único nó, que armazena e é o responsável (mestre) de uma parte do total de dados. Equivalente a “Sharding”.
-
 * *Big Data*: Um grande volume de dados.
-
 
