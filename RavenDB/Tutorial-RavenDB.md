@@ -629,6 +629,35 @@ Porém quando o banco de dados possui índices, então as operações de buscas 
 Fonte: [https://ravendb.net/docs/article-page/4.2/csharp/server/clustering/cluster-transactions](https://ravendb.net/docs/article-page/4.2/csharp/server/clustering/cluster-transactions)
 [https://ravendb.net/docs/article-page/4.1/csharp/client-api/faq/transaction-support](https://ravendb.net/docs/article-page/4.1/csharp/client-api/faq/transaction-support)
 
+# Onde usar o RavenDB
+O RavenDB se destaca por ser um banco de dados orientado a documentos com características ACID em todo o cluster, garantindo também grande disponibilidade. É indicado para apliações com variedade de tipos de dados e com consultas simples que não envolvam muitos relacionamentos. 
+
+## Casos de Uso
+- [Web Analytics](https://ravendb.net/articles/big-data-document-database-etl-replication-ravendb-case-study)
+
+Uma empresa de empregos da Inglaterra usou o RavenDB para uma aplicação onde era necessário garantir grande disponibilidade e operações ACID.
+- [Developer Analytics](https://ravendb.net/articles/document-database-analytics-code-a-like-ravendb-case-study)
+
+Software de monitoramento de desempenho de programadores, com grande quantidade de dados.
+
+- [Fintech Developer TSWG](https://ravendb.net/articles/nosql-database-for-digital-banking-applications)
+
+Empresa financeira que adotou a tecnologia pela velocidade de acesso aos dados e pela garantia de ACID. 
+
+Fontes: https://ravendb.net/news/use-cases
+
+https://ayende.com/blog/136196/when-should-you-use-rae
+
+
+# Onde NÃO usar o RavenDB
+
+Apesar das vantagens de se usar sistemas NoSQL em geral e de alguns destaques do RavenDB, existem aplicações onde não é indicado o uso deste banco de dados.
+
+Aplicações que demandam consultas muito complexas, com muitas informações relacionadas entre diferentes objetos e com pouca alteração no conjunto de dados tiram muito mais proveito de sistemas de banco de dados relacionais do que do RavenDB. Ainda mais se forem aplicações pequenas, que não demandem clusterização.
+
+Fonte:
+https://ayende.com/blog/136197/when-should-you-not-use-ravendb
+
 # Segurança
 No modo de desenvolvimento, o RavenDB roda no modo inseguro, porém em estágio de desenvolvimento é interessante a utilização do modo seguro, onde, por padrão somente o `localhost` está autenticado, desta forma, outros usuários terão que ser previamente autenticados para poderem acessar remotamente. O RavenDB  usa certificados de cliente `X509` para autenticação.
 
