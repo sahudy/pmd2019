@@ -43,6 +43,8 @@
       * [Escalabilidade](#escalabilidade)
    * [Transações](#transações)
    * [Segurança](#segurança)
+   * [Onde usar o RavenDB](#onde-usar-o-ravendb)
+   * [Onde NÃO usar o RavenDB](#onde-não-usar-o-ravendb)
    * [Glossário](#glossário)
    * [Exercícios](#exercícios)
    * [Exercícios - Soluções](#exercícios---soluções)
