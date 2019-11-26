@@ -1,0 +1,55 @@
+version: "3.5"
+services:
+  couchdb1:
+    image: couchdb:2.3.1
+    expose:
+      - 5984
+    environment:
+      - ERL_FLAGS=-setcookie "brumbrum"
+      - NODENAME=couchdb1.couchnet
+      - COUCHDB_USER=admin 
+      - COUCHDB_PASSWORD=mysecretpassword
+
+    networks:
+      couchnet:
+        aliases:
+          - couchdb1.couchnet
+        ipv4_address: 172.10.0.2
+
+  couchdb2:
+    image: couchdb:2.3.1
+    expose:
+      - 5984
+    environment:
+      - ERL_FLAGS=-setcookie "brumbrum"
+      - NODENAME=couchdb2.couchnet
+      - COUCHDB_USER=admin 
+      - COUCHDB_PASSWORD=mysecretpassword
+    networks:
+      couchnet:
+        aliases:
+          - couchdb2.couchnet
+        ipv4_address: 172.10.0.3
+
+  couchdb3:
+    image: couchdb:2.3.1
+    expose:
+      - 5984
+    environment:
+      - ERL_FLAGS=-setcookie "brumbrum"
+      - NODENAME=couchdb3.couchnet
+      - COUCHDB_USER=admin 
+      - COUCHDB_PASSWORD=mysecretpassword
+    networks:
+      couchnet:
+        aliases:
+          - couchdb3.couchnet
+        ipv4_address: 172.10.0.4
+
+
+networks:
+  couchnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.10.0.0/16
